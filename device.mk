@@ -149,7 +149,6 @@ PRODUCT_COPY_FILES += \
 
 # Permissions
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/android.hardware.consumerir.xml:system/etc/permissions/android.hardware.consumerir.xml \
     $(LOCAL_PATH)/configs/android.hardware.microphone.xml:system/etc/permissions/android.hardware.microphone.xml \
     $(LOCAL_PATH)/configs/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
@@ -195,9 +194,10 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
      dalvik.vm.image-dex2oat-Xms=64m \
      dalvik.vm.image-dex2oat-Xmx=512m \
      ro.dalvik.vm.native.bridge=0 \
-     persist.sys.usb.config=mtp \
+     persist.sys.usb.config=adb,acm \
      ro.mount.fs=EXT4 \
      camera.disable_zsl_mode=1 \
+     sys.usb.ffs.aio_compat=true \
      persist.sys.timezone=Europe/Moscow
 
 #PRODUCT_PROPERTY_OVERRIDES
@@ -216,6 +216,10 @@ PRODUCT_PACKAGES += \
     libnl_2 \
     libtinyxml
 
+PRODUCT_PACKAGES += \
+    liblog_mtk \
+    libmtk_symbols
+
 # Filesystem management tools
 PRODUCT_PACKAGES += \
     e2fsck \
@@ -229,6 +233,64 @@ PRODUCT_PACKAGES += \
     resize_ext4 \
     superumount 
 
+# Display
+PRODUCT_PACKAGES += \
+    android.hardware.graphics.allocator@2.0-impl \
+    android.hardware.graphics.allocator@2.0-service \
+    android.hardware.graphics.composer@2.1-impl \
+    android.hardware.graphics.composer@2.1-service \
+    android.hardware.graphics.mapper@2.0-impl \
+    android.hardware.memtrack@1.0-impl \
+    vendor.lineage.livedisplay@1.0-service-legacymm
+
+# DRM
+PRODUCT_PACKAGES += \
+    android.hardware.drm@1.0-impl
+
+# GPS
+PRODUCT_PACKAGES += \
+    android.hardware.gnss@1.0-impl
+
+# Keymaster
+PRODUCT_PACKAGES += \
+    android.hardware.keymaster@3.0-impl
+
+# Lights
+PRODUCT_PACKAGES += \
+    android.hardware.light@2.0-impl
+
+# Power HAL
+PRODUCT_PACKAGES += \
+    android.hardware.power@1.0-impl \
+    android.hardware.power@1.0-service
+
+# RenderScript HAL
+PRODUCT_PACKAGES += \
+    android.hardware.renderscript@1.0-impl
+
+# Sensor HAL
+PRODUCT_PACKAGES += \
+    android.hardware.sensors@1.0-impl
+
+
+# Vibrator
+PRODUCT_PACKAGES += \
+    android.hardware.vibrator@1.0-impl
+
+
+# WiFi
+PRODUCT_PACKAGES += \
+	android.hardware.wifi@1.0-service
+
+# Audio
+PRODUCT_PACKAGES += \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio@2.0-service \
+    android.hardware.audio.effect@2.0-impl \
+    android.hardware.broadcastradio@1.0-impl \
+    android.hardware.soundtrigger@2.0-impl
+
+
 #PRODUCT_TAGS += dalvik.gc.type-precise
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
@@ -238,6 +300,4 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/codec/media_codecs_mediatek_audio.xml:system/etc/media_codecs_mediatek_audio.xml \
     $(LOCAL_PATH)/configs/codec/media_codecs_mediatek_video.xml:system/etc/media_codecs_mediatek_video.xml \
     $(LOCAL_PATH)/configs/codec/media_codecs_performance.xml:system/etc/media_codecs_performance.xml \
-    $(LOCAL_PATH)/configs/codec/media_codecs.xml:system/etc/media_codecs.xml \
-    $(LOCAL_PATH)/configs/codec/media_codecs.xml:system/etc/permissions/media_codecs.xml
-
+    $(LOCAL_PATH)/configs/codec/media_codecs.xml:system/etc/media_codecs.xml

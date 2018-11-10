@@ -11,6 +11,7 @@ import init.fon.rc
 import init.volte.rc
 
 on init
+    export LD_PRELOAD "libmtk_symbols.so"
 
     # BATTERY proc
     chown radio system /proc/mtk_battery_cmd/current_cmd
@@ -81,6 +82,9 @@ on charger
 # mount different fs start
 on fs
     write /proc/bootprof "INIT:Mount_START"
+    wait /dev/block/platform/mtk-msdc.0/11230000.MSDC0
+    symlink /dev/block/platform/mtk-msdc.0/11230000.MSDC0 /dev/block/bootdevice
+
     mount_all /fstab.mt6795
     exec /system/bin/tune2fs -O has_journal -u 10010 -r 4096 /dev/block/platform/mtk-msdc.0/by-name/userdata
 
@@ -109,6 +113,9 @@ on fs
    mount iso9660 loop@/system/etc/iAmCdRom.iso /mnt/cd-rom ro
 
 on post-fs
+
+    mkdir /cache/logs 0775 system log
+    start persistentLogging
 
     chown system system /protect_f
     chmod 0770 /protect_f
@@ -576,6 +583,11 @@ on post-fs-data
 # -----------------------
 
 on boot
+    chmod 0666 /dev/pvrsrvkm
+
+    chown system system /dev/pvr_sync
+    chmod 0666 /dev/pvr_sync
+
 
     chown root /remount.sh
     chmod 700 /remount.sh
@@ -1361,4 +1373,9 @@ service sbchk /system/bin/sbchk
     user system
     group system
     oneshot
+
+service persistentLogging /system/bin/logcat -r 1024 -n 9 -v threadTime -f /cache/logs/log
+    user system
+    group system log
+    disabled
 

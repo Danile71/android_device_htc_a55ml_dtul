@@ -102,36 +102,31 @@ BOARD_KERNEL_PAGESIZE  := 2048
 BOARD_MKBOOTIMG_ARGS   := --kernel_offset 0x00008000 --ramdisk_offset 0x03f88000 --tags_offset 0x0df88000
 TARGET_KERNEL_CONFIG := a55ml_dtul_defconfig
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
-#TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/prebuilt/kernel
 TARGET_KERNEL_SOURCE := kernel/htc/a55ml_dtul
 TARGET_KERNEL_SELINUX_CONFIG := selinux_defconfig
 TARGET_KERNEL_SELINUX_LOG_CONFIG := selinux_log_defconfig
 
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
-KERNEL_TOOLCHAIN := /home/danil_e71/CyanogenMod/prebuilts/gcc/linux-x86/aarch64/toolchain/bin
+KERNEL_TOOLCHAIN := $(shell pwd)/prebuilts/gcc/linux-x86/aarch64/toolchain/bin
 
-
-
-# Make Image
-# TARGET_MKIMAGE := $(LOCAL_PATH)/mkimage
-
-TARGET_KMODULES := true
 # Disable memcpy opt (for audio libraries)
 TARGET_CPU_MEMCPY_OPT_DISABLE := true
 
 # Display
-USE_OPENGL_RENDERER := true
-BOARD_EGL_CFG := $(LOCAL_PATH)/configs/egl.cfg
-TARGET_SCREEN_HEIGHT := 2560
-TARGET_SCREEN_WIDTH := 1440
-BOARD_EGL_WORKAROUND_BUG_10194508 := true
-BOARD_EGL_NEEDS_HANDLE_VALUE := true
 MTK_HWC_SUPPORT := yes
 MTK_HWC_VERSION := 1.4.1
-# O
+MAX_EGL_CACHE_KEY_SIZE := 12*1024
+MAX_EGL_CACHE_SIZE := 2048*1024
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
+TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
+OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
+MAX_VIRTUAL_DISPLAY_DIMENSION := 2048
+TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
+TARGET_CONTINUOUS_SPLASH_ENABLED := true
+TARGET_HAVE_NEW_GRALLOC := true
 TARGET_USES_GRALLOC1 := true
+TARGET_USES_NEW_ION_API := true
 TARGET_USES_HWC2 := true
-TARGET_USES_NEW_ION_API :=true
 
 # Flags
 COMMON_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
@@ -158,11 +153,6 @@ TARGET_POWER_SET_FEATURE_LIB := power-feature-arale
 BOARD_USES_MTK_AUDIO := true
 BOARD_CONNECTIVITY_VENDOR := MediaTek
 BOARD_CONNECTIVITY_MODULE := conn_soc
-
-# Display
-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
-TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 
 # CMHW
 BOARD_USES_CYANOGEN_HARDWARE := true
@@ -213,12 +203,18 @@ BOARD_FLASH_BLOCK_SIZE := 4096
 
 
 TARGET_LD_SHIM_LIBS := \
-		/system/vendor/lib64/libsrv_um.so|libutilscallstack
-
-
+		/system/vendor/lib64/libsrv_um.so|libutilscallstack.so \
+		/system/vendor/lib/libsrv_um.so|libutilscallstack.so \
+		/system/lib64/libdpframework.so|liblog_mtk.so \
+		/system/lib/libdpframework.so|liblog_mtk.so \
+		/system/lib64/libgralloc_extra.so|liblog_mtk.so \
+		/system/lib/libgralloc_extra.so|liblog_mtk.so \
+		/system/lib64/hw/hwcomposer.mt6795.so|libmtk_symbols.so \
+		/system/lib64/libgui_ext.so|libmtk_symbols.so \
+		/system/lib/libgui_ext.so|libmtk_symbols.so
 # CWM
 TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/rootdir/etc/recovery.fstab
-TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun/file
+TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun0/file
 
 # TWRP FLAGS
 TW_THEME := portrait_hdpi
@@ -232,8 +228,10 @@ TW_EXCLUDE_SUPERSU := true
 # system.prop
 TARGET_SYSTEM_PROP := $(LOCAL_PATH)/system.prop
 
+# HIDL
+DEVICE_MANIFEST_FILE := \
+    $(LOCAL_PATH)/manifest.xml
+
 # SELinux
-BOARD_SEPOLICY_DIRS := \
-       device/htc/a55ml_dtul/sepolicy
-
-
+#BOARD_SEPOLICY_DIRS := \
+#       device/htc/a55ml_dtul/sepolicy
