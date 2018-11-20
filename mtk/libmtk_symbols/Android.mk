@@ -11,6 +11,7 @@ LOCAL_SRC_FILES := \
     mtk_omx.cpp \
     mtk_ui.cpp \
     mtk_gui.cpp \
+    mtk_net.cpp \
     mtk_xlog.cpp
 
 # only for 64bit libraries

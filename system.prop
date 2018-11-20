@@ -44,7 +44,7 @@ ro.audio.silent=0
 ro.zygote.preload.enable=0
 
 # temporary enables NAV bar (soft keys)
-qemu.hw.mainkeys=1
+qemu.hw.mainkeys=0
 
 # button jack mode & switch for cx861
 persist.sys.button_jack_profile=volume
@@ -61,7 +61,7 @@ ro.kernel.zio=38,108,105,16
 # Disable dirty region for Mali
 debug.hwui.render_dirty_regions=false
 
-ro.sf.lcd_density=480
+ro.sf.lcd_density=640
 
 # performance
 ro.mtk_perf_simple_start_win=1
@@ -101,7 +101,7 @@ dalvik.vm.mtk-stack-trace-file=/data/anr/mtk_traces.txt
 mediatek.wlan.chip=MT6630
 mediatek.wlan.module.postfix=_mt6630
 ril.radiooff.poweroffMD=0
-ro.frp.pst=/dev/block/platform/mtk-msdc.0/11230000.MSDC0/by-name/frp
+ro.frp.pst=/dev/block/bootdevice/by-name/frp
 ro.mediatek.version.branch=alps-mp-m0.mp11
 ro.mediatek.version.sdk=4
 bt.profiles.dun.enabled=1
@@ -189,16 +189,15 @@ ro.mtk_volte_support=1
 persist.dbg.volte_avail_ovr=1
 ro.mtk_voice_extension_support=1
 wfd.dummy.enable=1
-ro.mediatek.project.path=device/xiaomi/hennessy
+ro.mediatek.project.path=device/htc/a55ml_dtul
 persist.mtk.wcn.combo.chipid=-1
 service.wcn.driver.ready=no
-service.wcn.coredump.mode=2
 ro.com.android.mobiledata=false
 persist.radio.mobile.data=0,0
 persist.meta.dumpdata=0
 ro.mtk_md_sbp_custom_value=0
 #disable dirac effect for speaker
 persist.audio.dirac.speaker=false
-
+debug.hwui.use_buffer_age=false
 #default thermal policy
 persist.sys.aries.power_profile=middle

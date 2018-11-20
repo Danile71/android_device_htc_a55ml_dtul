@@ -1,18 +1,11 @@
 # MTK platform .rc configure
 
 import init.project.rc
-import /FWUpgradeInit.rc
-import init.xlog.rc
-#import init.aee.rc
-import init.ssd.rc
-import init.no_ssd.rc
-import init.ssd_nomuser.rc
-import init.fon.rc
-import init.volte.rc
+import init.modem.rc
+
 
 on init
-    export LD_PRELOAD "libmtk_symbols.so"
-
+    mount debugfs debugfs /sys/kernel/debug
     # BATTERY proc
     chown radio system /proc/mtk_battery_cmd/current_cmd
     chown radio system /proc/mtk_battery_cmd/discharging_cmd
@@ -53,17 +46,17 @@ on init
 # mount different fs start
 
 on charger
-    mount ext4 /dev/block/platform/mtk-msdc.0/by-name/system /system ro wait
+    mount ext4 /dev/block/bootdevice/by-name/system /system ro wait
 
     mkdir /devlog 0700 root root
-    wait /dev/block/platform/mtk-msdc.0/by-name/devlog
-    e2fsck /dev/block/platform/mtk-msdc.0/by-name/devlog
-    mount ext4 /dev/block/platform/mtk-msdc.0/by-name/devlog /devlog nosuid nodev barrier=1,errors=continue
+    wait /dev/block/bootdevice/by-name/devlog
+    exec /system/bin/e2fsck /dev/block/bootdevice/by-name/devlog
+    mount ext4 /dev/block/bootdevice/by-name/devlog /devlog nosuid nodev barrier=1,errors=continue
 
     mkdir /fataldevlog 0700 root root
-    wait /dev/block/platform/mtk-msdc.0/by-name/fataldevlog
-    e2fsck /dev/block/platform/mtk-msdc.0/by-name/fataldevlog
-    mount ext4 /dev/block/platform/mtk-msdc.0/by-name/fataldevlog /fataldevlog nosuid nodev barrier=1,errors=continue
+    wait /dev/block/bootdevice/by-name/fataldevlog
+    exec /system/bin/e2fsck /dev/block/bootdevice/by-name/fataldevlog
+    mount ext4 /dev/block/bootdevice/by-name/fataldevlog /fataldevlog nosuid nodev barrier=1,errors=continue
 
     start kpoc_charger
     start servicemanager
@@ -86,23 +79,26 @@ on fs
     symlink /dev/block/platform/mtk-msdc.0/11230000.MSDC0 /dev/block/bootdevice
 
     mount_all /fstab.mt6795
-    exec /system/bin/tune2fs -O has_journal -u 10010 -r 4096 /dev/block/platform/mtk-msdc.0/by-name/userdata
+    exec /system/bin/tune2fs -O has_journal -u 10010 -r 4096 /dev/block/bootdevice/by-name/userdata
 
 # change partition permissions
-    exec /system/bin/chmod 0660 /dev/block/platform/mtk-msdc.0/by-name/proinfo
-    exec /system/bin/chown root:system /dev/block/platform/mtk-msdc.0/by-name/proinfo
-    exec /system/bin/chmod 0660 /dev/block/platform/mtk-msdc.0/by-name/nvram
-    exec /system/bin/chown root:system /dev/block/platform/mtk-msdc.0/by-name/nvram
-    exec /system/bin/chmod 0660 /dev/block/platform/mtk-msdc.0/by-name/para
-    exec /system/bin/chown root:system /dev/block/platform/mtk-msdc.0/by-name/para
-    exec /system/bin/chmod 0660 /dev/block/platform/mtk-msdc.0/by-name/boot
-    exec /system/bin/chown root:system /dev/block/platform/mtk-msdc.0/by-name/boot
-    exec /system/bin/chmod 0660 /dev/block/platform/mtk-msdc.0/by-name/recovery
-    exec /system/bin/chown root:system /dev/block/platform/mtk-msdc.0/by-name/recovery
-    exec /system/bin/chmod 0660 /dev/block/platform/mtk-msdc.0/by-name/secro
-    exec /system/bin/chown root:system /dev/block/platform/mtk-msdc.0/by-name/secro
-    exec /system/bin/chmod 0660 /dev/block/platform/mtk-msdc.0/by-name/seccfg
-    exec /system/bin/chown root:system /dev/block/platform/mtk-msdc.0/by-name/seccfg
+    exec /system/bin/chmod 0660 /dev/block/bootdevice/by-name/proinfo
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/proinfo
+    exec /system/bin/chmod 0666 /dev/block/bootdevice/by-name/nvram
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/nvram
+    exec /system/bin/chmod 0660 /dev/block/bootdevice/by-name/para
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/para
+    exec /system/bin/chmod 0660 /dev/block/bootdevice/by-name/boot
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/boot
+    exec /system/bin/chmod 0660 /dev/block/bootdevice/by-name/recovery
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/recovery
+    exec /system/bin/chmod 0660 /dev/block/bootdevice/by-name/secro
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/secro
+    exec /system/bin/chmod 0660 /dev/block/bootdevice/by-name/seccfg
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/seccfg
+
+    exec /system/bin/chmod 0666 /dev/block/bootdevice/by-name/frp
+    exec /system/bin/chown root:system /dev/block/bootdevice/by-name/frp
 
     write /proc/bootprof "INIT:Mount_END"
 
@@ -180,7 +176,9 @@ on post-fs
 on post-fs-data
 
     # create basic filesystem structure
-    mkdir /data/nvram 2770 root system
+    mkdir /data/nvram 2777 root system
+
+    exec /system/bin/chmod -R 2777 /data/nvram
 
     chmod 0660 /data/misc/wifi/p2p_supplicant.conf
 
@@ -433,7 +431,7 @@ on post-fs-data
     mkdir /data/misc/ppp 0770 bluetooth net_bt
 
     # Android SEC related device nodes
-    mknod /dev/sec c 182 0
+    exec /system/bin/mknod /dev/sec c 182 0
     chmod 0660 /dev/sec
     chown root system /dev/sec
 
@@ -448,6 +446,25 @@ on post-fs-data
     chown root system /sys/autok/stage1/3/VOLTAGE
     chown root system /sys/autok/stage1/3/LOG
     chown root system /sys/autok/stage2/3
+
+    #change partition permission
+    chown root system /mtd@preloader
+    chmod 0640 /mtd@preloader
+    chown root system /mtd@pro_info
+    chmod 0660 /mtd@pro_info
+    chown root system /mtd@bootimg
+    chmod 0640 /mtd@bootimg
+    chown root system /mtd@recovery
+    chmod 0640 /mtd@recovery
+    chown root system /mtd@sec_ro
+    chmod 0640 /mtd@sec_ro
+
+    chown root system /mtd@nvram
+    chmod 0660 /mtd@nvram
+    chown root system /mtd@seccfg
+    chmod 0660 /mtd@seccfg
+    chown root system /mtd@misc
+    chmod 0660 /mtd@misc
 
     # FM Radio device node
     chmod 0660 /dev/fm
@@ -583,10 +600,14 @@ on post-fs-data
 # -----------------------
 
 on boot
+    #PowerVR
     chmod 0666 /dev/pvrsrvkm
-
     chown system system /dev/pvr_sync
     chmod 0666 /dev/pvr_sync
+
+    #Network RIL
+    chmod 0666 /dev/ccci_fs
+    chmod 0644 /proc/cmdline
 
 
     chown root /remount.sh
@@ -803,7 +824,7 @@ service netdiag /system/bin/netdiag
 
 
 service nvram_daemon /system/bin/nvram_daemon
-    class main
+    class core
     user root
     group system
     oneshot
@@ -1308,7 +1329,7 @@ service shutdown /system/bin/shutdown
 
 service NvRAMAgent /system/bin/nvram_agent_binder
     class main
-    user system
+    user root
     group system
 
 service thermal_manager /system/bin/thermal_manager

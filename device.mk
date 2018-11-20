@@ -80,10 +80,7 @@ PRODUCT_PACKAGES += \
     tinymix \
     libtinyalsa
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml \
-    $(LOCAL_PATH)/configs/audio_device.xml:system/etc/audio_device.xml \
-    $(LOCAL_PATH)/configs/audio_em.xml:system/etc/audio_em.xml \
-    $(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf
+    $(LOCAL_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml
 
 # media	
 PRODUCT_COPY_FILES += \
@@ -106,14 +103,6 @@ PRODUCT_PACKAGES += \
 # Bluetooth                            
 PRODUCT_PACKAGES += \
     audio.a2dp.default 
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/bt_did.conf:system/etc/bluetooth/bt_did.conf
-
-# Keyboard layout
-PRODUCT_COPY_FILES += \
-     $(LOCAL_PATH)/configs/mtk-kpd.kl:system/usr/keylayout/mtk-kpd.kl \
-     $(LOCAL_PATH)/configs/ACCDET.kl:system/usr/keylayout/ACCDET.kl\
-     $(LOCAL_PATH)/configs/AVRCP.kl:system/usr/keylayout/AVRCP.kl 
 
 # Telecom
 PRODUCT_COPY_FILES += \
@@ -129,14 +118,6 @@ PRODUCT_PACKAGES += \
 # GPS
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/configs/agps_profiles_conf2.xml:system/etc/agps_profiles_conf2.xml
-
-# Thermal
-PRODUCT_COPY_FILES += \
-     $(LOCAL_PATH)/configs/.ht120.mtc:system/etc/.tp/.ht120.mtc \
-     $(LOCAL_PATH)/configs/thermal.conf:system/etc/.tp/thermal.conf \
-     $(LOCAL_PATH)/configs/thermal.off.conf:system/etc/.tp/thermal.off.conf \
-     $(LOCAL_PATH)/configs/.thermal_policy_00:system/etc/.tp/.thermal_policy_00 \
-     $(LOCAL_PATH)/configs/.thermal_policy_01:system/etc/.tp/.thermal_policy_01 
 
 # FMRadio
 PRODUCT_PACKAGES += \
@@ -203,7 +184,6 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 #PRODUCT_PROPERTY_OVERRIDES
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.kernel.android.checkjni=0 \
-    ro.telephony.ril_class=MediaTekRIL \
     ro.telephony.ril.config=fakeiccid  \
     persist.call_recording.enabled=true \
     persist.call_recording.src=1 
@@ -217,7 +197,6 @@ PRODUCT_PACKAGES += \
     libtinyxml
 
 PRODUCT_PACKAGES += \
-    liblog_mtk \
     libmtk_symbols
 
 # Filesystem management tools
@@ -240,8 +219,7 @@ PRODUCT_PACKAGES += \
     android.hardware.graphics.composer@2.1-impl \
     android.hardware.graphics.composer@2.1-service \
     android.hardware.graphics.mapper@2.0-impl \
-    android.hardware.memtrack@1.0-impl \
-    vendor.lineage.livedisplay@1.0-service-legacymm
+    android.hardware.memtrack@1.0-impl
 
 # DRM
 PRODUCT_PACKAGES += \
@@ -289,6 +267,10 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.effect@2.0-impl \
     android.hardware.broadcastradio@1.0-impl \
     android.hardware.soundtrigger@2.0-impl
+
+# Mediaserver with system group
+PRODUCT_COPY_FILES += \
+	$(LOCAL_PATH)/configs/init/mediaserver.rc:system/etc/init/mediaserver.rc
 
 
 #PRODUCT_TAGS += dalvik.gc.type-precise

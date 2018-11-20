@@ -17,6 +17,7 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_FACTORYIMAGE := true
 
 TARGET_BOARD_PLATFORM := mt6795
+PRODUCT_SHIPPING_API_LEVEL := 21
 
 # CPU
 ifeq ($(FORCE_32_BIT),true)
@@ -62,8 +63,9 @@ COMMON_GLOBAL_CPPFLAGS += -DMTK_HARDWARE
 
 TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
     /system/bin/mediaserver=22 \
-    /system/bin/mm-qcamera-daemon=22 \
-    /system/vendor/bin/hw/rild=27
+    /system/vendor/bin/hw/rild=27 \
+    /system/bin/audioserver=22 \
+    /system/vendor/bin/hw/android.hardware.audio@2.0-service=22
 
 LZMA_RAMDISK_TARGETS := recovery
 
@@ -121,7 +123,7 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
 OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
 MAX_VIRTUAL_DISPLAY_DIMENSION := 2048
-TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
+#TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
 TARGET_CONTINUOUS_SPLASH_ENABLED := true
 TARGET_HAVE_NEW_GRALLOC := true
 TARGET_USES_GRALLOC1 := true
@@ -201,17 +203,45 @@ BOARD_BOOTIMAGE_PARTITION_SIZE := 0x2000000
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x2000000
 BOARD_FLASH_BLOCK_SIZE := 4096
 
-
+#BINARY
 TARGET_LD_SHIM_LIBS := \
-		/system/vendor/lib64/libsrv_um.so|libutilscallstack.so \
+		/system/bin/6620_launcher|libmtk_symbols.so \
+		/system/bin/nvram_agent_binder|libmtk_symbols.so \
+		/system/bin/thermal|libmtk_symbols.so \
+		/system/bin/thermald|libmtk_symbols.so \
+		/system/bin/thermal_manager|libmtk_symbols.so \
+		/system/bin/wmt_loader|libmtk_symbols.so
+
+#32BIT
+TARGET_LD_SHIM_LIBS += \
 		/system/vendor/lib/libsrv_um.so|libutilscallstack.so \
-		/system/lib64/libdpframework.so|liblog_mtk.so \
-		/system/lib/libdpframework.so|liblog_mtk.so \
-		/system/lib64/libgralloc_extra.so|liblog_mtk.so \
-		/system/lib/libgralloc_extra.so|liblog_mtk.so \
+		/system/lib/libdpframework.so|libmtk_symbols.so \
+		/system/lib/libgralloc_extra.so|libmtk_symbols.so \
+		/system/lib/hw/hwcomposer.mt6795.so|libmtk_symbols.so \
+		/system/lib/librilmtk.so|libmtk_symbols.so \
+		/system/lib/librilmtkmd2.so|libmtk_symbols.so \
+		/system/lib/libmtk-ril.so|libmtk_symbols.so \
+		/system/lib/libmtcloader.so|libmtk_symbols.so \
+		/system/lib/libcustom_nvram.so|libmtk_symbols.so \
+		/system/lib/hw/audio.primary.mt6795.so|libmtk_symbols.so \
+		/system/lib/hw/sensors.mt6795.so|libmtk_symbols.so \
+		/system/lib/hw/keystore.mt6795.so|libmtk_symbols.so
+
+#64BIT
+TARGET_LD_SHIM_LIBS += \
+		/system/vendor/lib64/libsrv_um.so|libutilscallstack.so \
+		/system/lib64/libdpframework.so|libmtk_symbols.so \
+		/system/lib64/libgralloc_extra.so|libmtk_symbols.so \
 		/system/lib64/hw/hwcomposer.mt6795.so|libmtk_symbols.so \
-		/system/lib64/libgui_ext.so|libmtk_symbols.so \
-		/system/lib/libgui_ext.so|libmtk_symbols.so
+		/system/lib64/librilmtk.so|libmtk_symbols.so \
+		/system/lib64/librilmtkmd2.so|libmtk_symbols.so \
+		/system/lib64/libcustom_nvram.so|libmtk_symbols.so \
+		/system/lib64/hw/audio.primary.mt6795.so|libmtk_symbols.so \
+		/system/lib64/hw/sensors.mt6795.so|libmtk_symbols.so \
+		/system/lib64/hw/keystore.mt6795.so|libmtk_symbols.so
+
+
+
 # CWM
 TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/rootdir/etc/recovery.fstab
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun0/file
